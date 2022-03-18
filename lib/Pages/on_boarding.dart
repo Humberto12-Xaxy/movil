@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:practicas/Styles/colors_view.dart';
 
+import '../widgets/contentBoarding.dart';
+
 class OnBoarding extends StatefulWidget {
-  OnBoarding({Key? key}) : super(key: key);
+  const OnBoarding({Key? key}) : super(key: key);
 
   @override
   State<OnBoarding> createState() => _OnBoardingState();
@@ -10,6 +12,7 @@ class OnBoarding extends StatefulWidget {
 
 class _OnBoardingState extends State<OnBoarding> {
   int pages = 0;
+  PageController controller = PageController(initialPage: 0);
   List<Map<String, String>> onBoardingData = [
     {
       "title": "ESPARCIMIENTO",
@@ -47,6 +50,7 @@ class _OnBoardingState extends State<OnBoarding> {
           children: <Widget>[
             Expanded(
               child: PageView.builder(
+                controller: controller,
                 onPageChanged: (value) {
                   setState(() {
                     pages = value;
@@ -74,7 +78,15 @@ class _OnBoardingState extends State<OnBoarding> {
                     width: 300,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (pages == onBoardingData.length - 1) {
+                          Navigator.pushNamed(context, 'progress');
+                        } else {
+                          controller.nextPage(
+                              duration: const Duration(milliseconds: 150),
+                              curve: Curves.easeIn);
+                        }
+                      },
                       child: Text(
                         pages == onBoardingData.length - 1
                             ? 'Continuar'
@@ -91,9 +103,11 @@ class _OnBoardingState extends State<OnBoarding> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
-                          side: const BorderSide(
+                          side: BorderSide(
                             width: 3,
-                            color: Colors.grey,
+                            color: pages == onBoardingData.length - 1
+                                ? Colors.transparent
+                                : ColorSelect.txtBoSubHe,
                           ),
                           primary: pages == onBoardingData.length - 1
                               ? ColorSelect.btnBackgroundBo2
@@ -121,42 +135,6 @@ class _OnBoardingState extends State<OnBoarding> {
       height: 5,
       width: pages == index ? 20 : 15,
       duration: kThemeAnimationDuration,
-    );
-  }
-}
-
-class ContentBoarding extends StatelessWidget {
-  const ContentBoarding({
-    Key? key,
-    required this.image,
-    required this.title,
-    required this.subtitle,
-  }) : super(key: key);
-
-  final String image, title, subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Image.asset(image, width: 290, height: 290),
-        Text(
-          title,
-          style: const TextStyle(
-              color: ColorSelect.txtBoHe,
-              fontSize: 21,
-              fontWeight: FontWeight.bold),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 15, color: ColorSelect.txtBoSubHe),
-          ),
-        )
-      ],
     );
   }
 }
